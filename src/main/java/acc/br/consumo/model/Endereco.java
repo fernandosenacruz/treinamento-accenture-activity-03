@@ -1,6 +1,13 @@
 package acc.br.consumo.model;
 
+import jakarta.persistence.*;
+
+@Entity
 public class Endereco {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	private String cep;
 	private String logradouro;
@@ -13,8 +20,7 @@ public class Endereco {
 	private String ddd;
 	private String siafi;
 
-
-	public void Endereco() {}
+	public Endereco() {}
 
 	public String getCep() {
 		return cep;

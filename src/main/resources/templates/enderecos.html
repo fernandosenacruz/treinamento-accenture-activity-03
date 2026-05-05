@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Endereços</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #007bff;
+            color: white;
+        }
+
+        th, td {
+            padding: 10px;
+        }
+
+        tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+
+        @media (max-width: 600px) {
+            table, thead, tbody, tr, td {
+                display: block;
+            }
+
+            thead {
+                display: none;
+            }
+
+            tr {
+                margin-bottom: 15px;
+                background: #fafafa;
+                padding: 10px;
+            }
+
+            td {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            td::before {
+                content: attr(data-label);
+                font-weight: bold;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Endereços Consultados</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>CEP</th>
+            <th>Logradouro</th>
+            <th>Bairro</th>
+            <th>Cidade</th>
+            <th>UF</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="e : ${enderecos}">
+            <td th:text="${e.cep}" data-label="CEP"></td>
+            <td th:text="${e.logradouro}" data-label="Logradouro"></td>
+            <td th:text="${e.bairro}" data-label="Bairro"></td>
+            <td th:text="${e.localidade}" data-label="Cidade"></td>
+            <td th:text="${e.uf}" data-label="UF"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
