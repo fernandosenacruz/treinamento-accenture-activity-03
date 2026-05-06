@@ -41,6 +41,42 @@
             background: #f2f2f2;
         }
 
+        .form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .form button {
+            padding: 10px 15px;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .form button:hover {
+            background: #0056b3;
+        }
+
+        #loading {
+            margin: 10px 0;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        #erro {
+            margin: 10px 0;
+        }
+
         @media (max-width: 600px) {
             table, thead, tbody, tr, td {
                 display: block;
@@ -68,33 +104,88 @@
         }
     </style>
 </head>
-<body>
+<script>
+    async function buscarCep() {
+        const cep = document.getElementById("cepInput").value;
+        const loading = document.getElementById("loading");
+        const erro = document.getElementById("erro");
 
-<div class="container">
-    <h1>Endereços Consultados</h1>
+        erro.innerText = "";
+        loading.style.display = "block";
 
-    <table>
-        <thead>
+        try {
+            const response = await fetch(`/api/cep/${cep}`);
+
+            if (!response.ok) {
+                throw new Error("CEP inválido");
+            }
+
+            const data = await response.json();
+
+            adicionarNaTabela(data);
+
+        } catch (e) {
+            erro.innerText = "Erro ao buscar CEP";
+        } finally {
+            loading.style.display = "none";
+        }
+    }
+
+    function adicionarNaTabela(e) {
+        const existente = document.querySelector(`td[data-cep="${e.cep}"]`);
+        if (existente) return;
+
+        const tbody = document.querySelector("tbody");
+
+        const row = `
         <tr>
-            <th>CEP</th>
-            <th>Logradouro</th>
-            <th>Bairro</th>
-            <th>Cidade</th>
-            <th>UF</th>
+            <td data-cep="${e.cep}">${e.cep}</td>
+            <td>${e.logradouro}</td>
+            <td>${e.bairro}</td>
+            <td>${e.localidade}</td>
+            <td>${e.uf}</td>
         </tr>
-        </thead>
+    `;
 
-        <tbody>
-        <tr th:each="e : ${enderecos}">
-            <td th:text="${e.cep}" data-label="CEP"></td>
-            <td th:text="${e.logradouro}" data-label="Logradouro"></td>
-            <td th:text="${e.bairro}" data-label="Bairro"></td>
-            <td th:text="${e.localidade}" data-label="Cidade"></td>
-            <td th:text="${e.uf}" data-label="UF"></td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+        tbody.innerHTML += row;
+    }
+</script>
 
+<body>
+    <div class="container">
+        <h1>Buscar Endereço</h1>
+
+        <div class="form">
+            <input type="text" id="cepInput" placeholder="Digite o CEP" />
+            <button onclick="buscarCep()">Buscar</button>
+        </div>
+
+        <div id="loading" style="display:none;">Buscando...</div>
+        <div id="erro" style="color:red;"></div>
+
+        <h1>Endereços Consultados</h1>
+
+        <table>
+            <thead>
+            <tr>
+                <th>CEP</th>
+                <th>Logradouro</th>
+                <th>Bairro</th>
+                <th>Cidade</th>
+                <th>UF</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="e : ${enderecos}">
+                <td th:text="${e.cep}" data-label="CEP"></td>
+                <td th:text="${e.logradouro}" data-label="Logradouro"></td>
+                <td th:text="${e.bairro}" data-label="Bairro"></td>
+                <td th:text="${e.localidade}" data-label="Cidade"></td>
+                <td th:text="${e.uf}" data-label="UF"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>

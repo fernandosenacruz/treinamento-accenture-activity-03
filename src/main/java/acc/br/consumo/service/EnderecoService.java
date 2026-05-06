@@ -19,16 +19,28 @@ public class EnderecoService {
 	}
 
 	public Endereco buscarESalvar(String cep) {
-		Endereco endereco = cepService.buscaEnderecoPorCep(cep);
 
-		if (endereco != null) {
-			return repository.save(endereco);
-		}
+		String cepNormalizado = normalizarCep(cep);
 
-		return null;
+		return repository.findByCep(cepNormalizado)
+				.orElseGet(() -> {
+					Endereco endereco = cepService.buscaEnderecoPorCep(cepNormalizado);
+
+					if (endereco == null || endereco.getCep() == null) {
+						throw new RuntimeException("CEP inválido");
+					}
+
+					endereco.setCep(normalizarCep(endereco.getCep()));
+
+					return repository.save(endereco);
+				});
 	}
 
 	public List<Endereco> listarTodos() {
 		return repository.findAll();
+	}
+
+	private String normalizarCep(String cep) {
+		return cep.replaceAll("[^0-9]", "");
 	}
 }

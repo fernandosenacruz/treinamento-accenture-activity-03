@@ -9,6 +9,7 @@ public class Endereco {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(nullable = false, unique = true)
 	private String cep;
 	private String logradouro;
 	private String complemento;
